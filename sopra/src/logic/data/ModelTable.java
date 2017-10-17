@@ -2,8 +2,7 @@ package logic.data;
 
 import java.util.Vector;
 
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * Clase que implementa la interfaz TableModel con todas las entradas
@@ -13,7 +12,7 @@ import javax.swing.table.TableModel;
  * @author ddelaconcepcionsaez
  *
  */
-public class ModelTable implements TableModel {
+public class ModelTable extends AbstractTableModel {
 	
 	private String[] cols;
 	private Vector<Vector<String>> data;
@@ -76,6 +75,21 @@ public class ModelTable implements TableModel {
 			i++;
 		}
 		data.add(v);
+		this.fireTableDataChanged();
+	}
+	
+	public void clear(){
+		data=new Vector<Vector<String>>();
+	}
+	
+	public void copyInHere(ModelTable t){
+		clear();
+		for(int j=0;j<t.getRowCount();j++){
+			for(int i=0;i<t.getColumnCount();i++){
+				setValueAt(t.getValueAt(j, i),j,i);
+			}
+		}
+		this.fireTableDataChanged();
 	}
 
 	@Override
@@ -96,29 +110,26 @@ public class ModelTable implements TableModel {
 		return false;
 	}
 
-	@Override
 	/**
-	 * Metodo para modificar una entrada concreta de la tabla
+	 * Metodo para modificar una entrada concreta de la tabla. Solo es posible 
+	 * modificar un valor ya existente o colocar un valor en una nueva fila. La
+	 * nueva fila se crea con cada entrada la cadena vacia.
 	 * 
 	 * @param aValue es un String que representa el valor que se desea modificar.
 	 * @param rowIndex es el numero de la fila que se desea modificar
 	 * @param columnIndex es el numero de la columna que se desea modificar
 	 */
+	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
-		data.get(rowIndex).setElementAt((String) aValue, columnIndex);
-	}
-
-	@Override
-	public void addTableModelListener(TableModelListener l) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeTableModelListener(TableModelListener l) {
-		// TODO Auto-generated method stub
-		
+		if(data.size()==rowIndex){
+			data.add(new Vector<String>());
+			for(int i=0;i<this.getColumnCount();i++){
+				data.get(data.size()-1).add("");
+			}
+		}
+		data.get(rowIndex).set(columnIndex,(String) aValue);
+		this.fireTableDataChanged();
 	}
 
 }
