@@ -5,6 +5,7 @@ USE sopraerp;
 create table empresa(
 	id_empresa SMALLINT UNSIGNED NOT NULL,
     descripcion varchar(45) not null,
+    seleccionada boolean default 0,
     primary key(id_empresa)
     
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -34,6 +35,12 @@ id_empresa smallint unsigned not null,
   CONSTRAINT `fk_empresa2` FOREIGN KEY (id_empresa,id_familia) REFERENCES familia (id_empresa,id_familia) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+create table tipo_cliente (
+    id_tipo smallint unsigned not null,
+    descripcion varchar(45) not null,
+    primary key (id_tipo)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 create table cliente(
 	id_empresa smallint unsigned not null,
 	id_cliente smallint unsigned not null,
@@ -44,7 +51,8 @@ create table cliente(
     tipo_cliente smallint unsigned,
     email varchar(45),
     primary key(id_empresa,id_cliente),
-    CONSTRAINT `fk_empresa_cliente` FOREIGN KEY (id_empresa) REFERENCES empresa (id_empresa) ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT `fk_empresa_cliente` FOREIGN KEY (id_empresa) REFERENCES empresa (id_empresa) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (tipo_cliente) REFERENCES tipo_cliente (id_tipo) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table proveedor(
@@ -328,6 +336,3 @@ create table facprov_imp(
     CONSTRAINT `fk_fact_impprov1` FOREIGN KEY (id_impuesto) REFERENCES impuesto (id_impuesto) ON DELETE RESTRICT ON UPDATE CASCADE,
 	CONSTRAINT `fk_fact_impprov3` FOREIGN KEY (id_empresa,id_numdoc) REFERENCES faccl_cab (id_empresa,id_numdoc) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
